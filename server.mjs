@@ -18,12 +18,40 @@ app.use((req, res, next) => {
     `-----
 ${time.toLocaleTimeString()}: Received a ${req.method} request to ${req.url}.`
   );
-  if (Object.keys(req.body).length > 0) {
+  if (req.body && Object.keys(req.body).length > 0) {
     console.log("Containing the data:");
     console.log(JSON.stringify(req.body));
   }
   next();
 });
+
+ // Valid API Keys.
+const apiKeys = ["perscholas", "ps-example", "hJAsknw-L198sAJD-l3kasx"];
+
+// New middleware to check for API keys!
+// Note that if the key is not verified,
+// we do not call next(); this is the end.
+// This is why we attached the /api/ prefix
+// to our routing at the beginning!
+app.use("/api", function (req, res, next) {
+  var key = req.query["api-key"];
+
+  // Check for the absence of a key.
+  if (!key) {
+    res.status(400);
+    return res.json({ error: "API Key Required" });
+  }
+
+  // Check for key validity.
+  if (apiKeys.indexOf(key) === -1) {
+    res.status(401);
+    return res.json({ error: "Invalid API Key" });
+  }
+
+  // Valid key! Store it in req.key for route access.
+  req.key = key;
+  next();
+}); 
 
 // Routes
 app.use("/api/user", userRoutes);
