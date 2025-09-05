@@ -57,6 +57,47 @@ app.use("/api", function (req, res, next) {
 app.use("/api/user", userRoutes);
 app.use("/api/posts", postRoutes);
 
+// Adding some HATEOAS links.
+app.get("/", (req, res) => {
+  res.json({
+    links: [
+      {
+        href: "/api",
+        rel: "api",
+        type: "GET",
+      },
+    ],
+  });
+});
+
+// Adding some HATEOAS links.
+app.get("/api", (req, res) => {
+  res.json({
+    links: [
+      {
+        href: "api/users",
+        rel: "users",
+        type: "GET",
+      },
+      {
+        href: "api/users",
+        rel: "users",
+        type: "POST",
+      },
+      {
+        href: "api/posts",
+        rel: "posts",
+        type: "GET",
+      },
+      {
+        href: "api/posts",
+        rel: "posts",
+        type: "POST",
+      },
+    ],
+  });
+});
+
 // Global Err Handling
 app.use((req, res) => {
   res.status(404).json({ msg: "Resource Not Found" });
