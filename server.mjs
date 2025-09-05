@@ -11,13 +11,27 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  const time = new Date();
+
+  console.log(
+    `-----
+${time.toLocaleTimeString()}: Received a ${req.method} request to ${req.url}.`
+  );
+  if (Object.keys(req.body).length > 0) {
+    console.log("Containing the data:");
+    console.log(JSON.stringify(req.body));
+  }
+  next();
+});
+
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/posts", postRoutes);
 
 // Global Err Handling
 app.use((req, res) => {
-  res.status(404).res.json({ msg: "Resource Not Found" });
+  res.status(404).json({ msg: "Resource Not Found" });
 });
 
 app.use(function (err, req, res, next) {
