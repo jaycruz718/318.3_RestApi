@@ -61,9 +61,24 @@ router
     if (post) {
       res.json(posts);
     } else next();
+  })
+  .delete((req, res, next) => {
+    // find the post that the client wants to delete
+    const id = req.params.id
+    const post = posts.find((post,i) => {
+      posts.splice(i, 1)// remove the post at index i
+      return true;  
+    });
+
+    
+    // send the client a response
+    if(post){
+      res.json(posts)
+    } else next();
   });
 
 export default router;
+
 
 /*
 .patch((req, res, next) => {
